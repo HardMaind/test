@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 
 var UserStateContext = React.createContext();
 var UserDispatchContext = React.createContext();
@@ -45,32 +46,68 @@ function useUserDispatch() {
   return context;
 }
 
-export { UserProvider, useUserState, useUserDispatch, loginUser, signOut };
+export { UserProvider, useUserState, useUserDispatch, loginUser };
 
 // ###########################################################
 
-function loginUser(dispatch, login, password, history, setIsLoading, setError) {
+function loginUser(
+  dispatch,
+  loginValue,
+  passwordValue,
+  history,
+  setIsLoading,
+  setError,
+) {
   setError(false);
   setIsLoading(true);
 
-  if (!!login && !!password) {
-    setTimeout(() => {
-      localStorage.setItem('id_token', 1)
-      setError(null)
-      setIsLoading(false)
-      dispatch({ type: 'LOGIN_SUCCESS' })
+  if (loginValue && passwordValue) {
+    axios
+      .post("http://localhost:8000/adminLogin", {
+        email: loginValue,
+        password: passwordValue,
+      })
+      .then((response) => {
+        setTimeout(() => {
+          console.log("response", response);
 
-      history.push('/app/dashboard')
-    }, 2000);
-  } else {
-    dispatch({ type: "LOGIN_FAILURE" });
-    setError(true);
-    setIsLoading(false);
+          localStorage.setItem("id_token", response.data.Token);
+          setError(null);
+          setIsLoading(false);
+          dispatch({ type: "LOGIN_SUCCESS" });
+
+          history.push("/app/dashboard");
+        }, 2000);
+      })
+      .catch((error) => {
+        // console.log(error);
+        setIsLoading(false);
+        // if (error.response.status === 401 || error.response.status === 400) {
+        //   setError(error.response.data.message);
+        // } else {
+        setError("Something Went Wrong.Try again later");
+        // }
+        // console.log("error", error);
+      });
+
+    // setTimeout(() => {
+    // localStorage.setItem('id_token', 1)
+    //   setError(null)
+    //   setIsLoading(false)
+    //   dispatch({ type: 'LOGIN_SUCCESS' })
+
+    //   history.push('/app/dashboard')
+    // }, 2000);
   }
+  // else {
+  //   dispatch({ type: "LOGIN_FAILURE" });
+  //   setError(true);
+  //   setIsLoading(false);
+  // }
 }
 
-function signOut(dispatch, history) {
-  localStorage.removeItem("id_token");
-  dispatch({ type: "SIGN_OUT_SUCCESS" });
-  history.push("/login");
-}
+// function signOut(dispatch, history) {
+//   localStorage.removeItem("id_token");
+//   dispatch({ type: "SIGN_OUT_SUCCESS" });
+//   history.push("/login");
+// }

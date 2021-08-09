@@ -5,16 +5,22 @@ import MUIDataTable from "mui-datatables";
 import axios from "axios";
 import mock from "../dashboard/mock";
 import { Link } from "react-router-dom";
-import Swal from "sweetalert2";
+
 import Tooltip from "@material-ui/core/Tooltip";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import { ToastContainer, toast } from "material-react-toastify";
 import "material-react-toastify/dist/ReactToastify.css";
-import { getAllUser, deleteUsr, deleteAllUsr } from "../../Services/ApiService";
-import { confirmAlert } from "react-confirm-alert"; // Import
+import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import Button from "@material-ui/core/Button";
+import Swal from "sweetalert2";
+
+import {
+  getAllProduct,
+  deleteProduct,
+  deleteAllPro,
+} from "../../Services/ApiService";
 
 import PageTitle from "../../components/PageTitle/PageTitle";
 import Widget from "../../components/Widget/Widget";
@@ -24,15 +30,20 @@ const useStyles = makeStyles((theme) => ({
   tableOverflow: {
     overflow: "auto",
   },
+  large: {
+    height: `54px !important`,
+    width: `54px !important`,
+  },
   titleItemRight: {
     transform: "translateY(-40%)",
     align: "right",
   },
 }));
 
-export default function Tables() {
+export default function Products() {
   const classes = useStyles();
   let history = useHistory();
+  const serverBaseURI = "http://localhost:8000";
 
   const [dataValues, setdataValues] = useState([]);
 
@@ -41,7 +52,7 @@ export default function Tables() {
   }, []);
 
   const list = () => {
-    getAllUser(
+    getAllProduct(
       (response) => {
         setdataValues(response.data.data);
         console.log(response.data);
@@ -51,8 +62,7 @@ export default function Tables() {
       },
     );
   };
-
-  const deleteUser = (uid) => {
+  const deleteProducts = (uid) => {
     Swal.fire({
       title: "Are you sure?",
       text: "You will not be able to recover this imaginary file!",
@@ -63,7 +73,7 @@ export default function Tables() {
     }).then((result) => {
       if (result.isConfirmed) {
         return (
-          deleteUsr(uid, () => {
+          deleteProduct(uid, () => {
             list();
           }),
           Swal.fire(
@@ -77,8 +87,6 @@ export default function Tables() {
       }
     });
   };
-  const token = localStorage.getItem("id_token");
-
   const deleteRows = (RowsDeleted, data) => {
     const ids = RowsDeleted.data.map((d) => d.dataIndex);
 
@@ -99,7 +107,8 @@ export default function Tables() {
       var data_ids = values._id;
     });
     console.log(usr, "usr");
-    deleteAllUsr(
+    const token = localStorage.getItem("id_token");
+    deleteAllPro(
       usr,
       token,
       () => {
@@ -114,17 +123,28 @@ export default function Tables() {
 
   const rows = dataValues.map((user) => {
     return {
-      name: user.name,
-      email: user.email,
-      phoneno: user.phoneno,
+      title: user.title,
+      image: (
+        <div>
+          <img
+            className={classes.large}
+            src={`${serverBaseURI}/${user.image[0]}`}
+            alt={user.image}
+          />
+        </div>
+      ),
+      description: user.description,
+      category: user.category,
+      price: user.price,
+      quantity: user.quantity,
 
       action: (
         <div>
           <EditIcon
-            onClick={() => history.push("/app/updateuser/" + user._id)}
+            onClick={() => history.push("/app/updateproduct/" + user._id)}
           />
 
-          <DeleteIcon onClick={() => deleteUser(user._id)} />
+          <DeleteIcon onClick={() => deleteProducts(user._id)} />
         </div>
       ),
     };
@@ -134,7 +154,7 @@ export default function Tables() {
   console.log("Basic " + localStorage.getItem("id_token"));
   return (
     <>
-      <PageTitle title="Users" />
+      <PageTitle title="Products" />
       <ToastContainer />
       <Grid container spacing={4}>
         <Grid item xs={12}>
@@ -142,17 +162,21 @@ export default function Tables() {
             className={classes.titleItemRight}
             variant="contained"
             color="primary"
-            onClick={() => history.push("/app/adduser")}
+            onClick={() => history.push("/app/addproduct")}
           >
             Add New
           </Button>
+
           <MUIDataTable
-            title="User List"
+            title="All Products"
             data={rows}
             columns={[
-              { name: "name", label: "Name" },
-              { name: "phoneno", label: "Contact" },
-              { name: "email", label: "Email" },
+              { name: "title", label: "Title" },
+              { name: "image", label: "Image" },
+              { name: "description", label: "Description" },
+              { name: "category", label: "Category" },
+              { name: "price", label: "Price" },
+              { name: "quantity", label: "Quantity" },
               { name: "action", label: "Action" },
             ]}
             options={{

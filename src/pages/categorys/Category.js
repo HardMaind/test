@@ -3,56 +3,60 @@ import { Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import MUIDataTable from "mui-datatables";
 import axios from "axios";
-import mock from "../dashboard/mock";
-import { Link } from "react-router-dom";
-import Swal from "sweetalert2";
-import Tooltip from "@material-ui/core/Tooltip";
+
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
+import Avatar from "@material-ui/core/Avatar";
+import Image from "material-ui-image";
+import Button from "@material-ui/core/Button";
+import { confirmAlert } from "react-confirm-alert"; // Import
+
+import "react-confirm-alert/src/react-confirm-alert.css";
 import { ToastContainer, toast } from "material-react-toastify";
 import "material-react-toastify/dist/ReactToastify.css";
-import { getAllUser, deleteUsr, deleteAllUsr } from "../../Services/ApiService";
-import { confirmAlert } from "react-confirm-alert"; // Import
-import "react-confirm-alert/src/react-confirm-alert.css";
-import Button from "@material-ui/core/Button";
+import { deleteCat, deleteAllCat } from "../../Services/ApiService";
 
 import PageTitle from "../../components/PageTitle/PageTitle";
 import Widget from "../../components/Widget/Widget";
+import Category from "../dashboard/components/Category/Category";
 import { useHistory } from "react-router-dom";
+import Swal from "sweetalert2";
 
-const useStyles = makeStyles((theme) => ({
-  tableOverflow: {
-    overflow: "auto",
-  },
-  titleItemRight: {
-    transform: "translateY(-40%)",
-    align: "right",
-  },
-}));
+const useStyles = makeStyles(() => {
+  return {
+    large: {
+      height: `54px !important`,
+      width: `54px !important`,
+    },
+    titleItemRight: {
+      transform: "translateY(-40%)",
+      align: "right",
+    },
+  };
+});
 
-export default function Tables() {
+export default function Categorys() {
   const classes = useStyles();
   let history = useHistory();
 
   const [dataValues, setdataValues] = useState([]);
+  const serverBaseURI = "http://localhost:8000";
 
   useEffect(() => {
     list();
   }, []);
-
   const list = () => {
-    getAllUser(
-      (response) => {
+    axios
+      .get("http://localhost:8000/category", {
+        headers: { Authorization: "Basic " + localStorage.getItem("id_token") },
+      })
+      .then((response) => {
         setdataValues(response.data.data);
         console.log(response.data);
-      },
-      (err) => {
-        alert(err);
-      },
-    );
+      });
   };
 
-  const deleteUser = (uid) => {
+  const deleteCategory = (uid) => {
     Swal.fire({
       title: "Are you sure?",
       text: "You will not be able to recover this imaginary file!",
@@ -63,7 +67,7 @@ export default function Tables() {
     }).then((result) => {
       if (result.isConfirmed) {
         return (
-          deleteUsr(uid, () => {
+          deleteCat(uid, () => {
             list();
           }),
           Swal.fire(
@@ -77,8 +81,6 @@ export default function Tables() {
       }
     });
   };
-  const token = localStorage.getItem("id_token");
-
   const deleteRows = (RowsDeleted, data) => {
     const ids = RowsDeleted.data.map((d) => d.dataIndex);
 
@@ -99,7 +101,8 @@ export default function Tables() {
       var data_ids = values._id;
     });
     console.log(usr, "usr");
-    deleteAllUsr(
+    const token = localStorage.getItem("id_token");
+    deleteAllCat(
       usr,
       token,
       () => {
@@ -114,47 +117,58 @@ export default function Tables() {
 
   const rows = dataValues.map((user) => {
     return {
-      name: user.name,
-      email: user.email,
-      phoneno: user.phoneno,
+      title: user.title,
+      image: (
+        <div>
+          <img
+            className={classes.large}
+            src={`${serverBaseURI}/${user.image}`}
+            alt={user.image}
+          />
+        </div>
+      ),
 
       action: (
         <div>
           <EditIcon
-            onClick={() => history.push("/app/updateuser/" + user._id)}
+            onClick={() => history.push("updatecategory/" + user._id)}
           />
 
-          <DeleteIcon onClick={() => deleteUser(user._id)} />
+          <DeleteIcon onClick={() => deleteCategory(user._id)} />
         </div>
       ),
     };
   });
+  const columns = [
+    { name: "title", label: "Name" },
+    {
+      name: "image",
+      label: "Image",
+    },
+    { name: "action", label: "Action" },
+  ];
 
   console.log("mydatasss", dataValues);
   console.log("Basic " + localStorage.getItem("id_token"));
   return (
     <>
-      <PageTitle title="Users" />
+      <PageTitle title="Categorys" />
       <ToastContainer />
+
       <Grid container spacing={4}>
-        <Grid item xs={12}>
+        <Grid item xs={8}>
           <Button
             className={classes.titleItemRight}
             variant="contained"
             color="primary"
-            onClick={() => history.push("/app/adduser")}
+            onClick={() => history.push("/app/addcategory")}
           >
             Add New
           </Button>
           <MUIDataTable
-            title="User List"
+            title="Category"
             data={rows}
-            columns={[
-              { name: "name", label: "Name" },
-              { name: "phoneno", label: "Contact" },
-              { name: "email", label: "Email" },
-              { name: "action", label: "Action" },
-            ]}
+            columns={columns}
             options={{
               filterType: "checkbox",
               onRowsDelete: deleteRows,
