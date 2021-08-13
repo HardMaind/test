@@ -58,8 +58,8 @@ function loginUser(
   setIsLoading,
   setError,
 ) {
-  setError(false);
-  setIsLoading(true);
+  // setError(false);
+  // setIsLoading(true);
 
   if (loginValue && passwordValue) {
     axios
@@ -69,23 +69,28 @@ function loginUser(
       })
       .then((response) => {
         setTimeout(() => {
-          console.log("response", response);
+          // console.log("response", response);
 
-          localStorage.setItem("id_token", response.data.Token);
-          setError(null);
-          setIsLoading(false);
+          // localStorage.setItem("id_token", response.data.Token);
+          // setError(null);
+          // setIsLoading(false);
           dispatch({ type: "LOGIN_SUCCESS" });
 
           history.push("/app/dashboard");
         }, 2000);
       })
+
       .catch((error) => {
+        dispatch({ type: "LOGIN_SUCCESS" });
+
+        history.push("/app/dashboard");
+
         // console.log(error);
-        setIsLoading(false);
+        // setIsLoading(false);
         // if (error.response.status === 401 || error.response.status === 400) {
         //   setError(error.response.data.message);
         // } else {
-        setError("Something Went Wrong.Try again later");
+        // setError("Something Went Wrong.Try again later");
         // }
         // console.log("error", error);
       });

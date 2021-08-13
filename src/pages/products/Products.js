@@ -58,7 +58,7 @@ export default function Products() {
         console.log(response.data);
       },
       (err) => {
-        alert(err);
+        console.log(err);
       },
     );
   };
@@ -116,7 +116,7 @@ export default function Products() {
         toast.error("Deleted");
       },
       (err) => {
-        alert(err);
+        console.log(err);
       },
     );
   };

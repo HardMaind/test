@@ -108,8 +108,8 @@ function Login(props) {
                         loginValue,
                         passwordValue,
                         props.history,
-                        setIsLoading,
-                        setError,
+                        // setIsLoading,
+                        // setError,
                       )
                     }
                     variant="contained"
