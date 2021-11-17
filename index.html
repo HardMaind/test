@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <p>
+      <b> <center style="font-size: 20px">Image Upload</center> </b>
+    </p>
+    <div
+      style="
+        width: 50%;
+        height: 50%;
+        background-color: rgb(164, 216, 216);
+        text-align: center;
+        padding: 5rem;
+        margin: 5rem 0 0 15rem;
+      "
+    >
+      <form action="/upload" method="POST" enctype="multipart/form-data">
+        <label for="images">Upload Image</label>
+        <input type="file" name="images" id="images" />
+        <button type="submit">upload images</button>
+      </form>
+    </div>
+  </body>
+</html>
