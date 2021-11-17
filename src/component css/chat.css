@@ -1,0 +1,81 @@
+.chat {
+  display: flex;
+  flex-direction: column;
+  flex: 0.65;
+}
+.chat_header {
+  display: flex;
+  padding: 20px;
+  align-items: center;
+  border-bottom: 1px solid lightgray;
+}
+.chat_header_info {
+  flex: 1;
+  padding: 15px;
+}
+.chat_header_info h3 {
+  margin-bottom: 3px;
+  font-weight: 500;
+}
+.chat_header_info p {
+  color: grey;
+}
+.chat_body {
+  flex: 1;
+  background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQeJHJeF172XPa2aVkWcxsYNLHwCiMJ_-Wcxg&usqp=CAU");
+  background-repeat: repeat;
+  background-position: center;
+  padding: 30px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+.chat_message {
+  position: relative;
+  font-size: 15px;
+  padding: 10px;
+  width: fit-content;
+  border-radius: 10px;
+  background-color: #ffffff;
+  margin-bottom: 30px;
+}
+.chat_reciver {
+  margin-left: auto;
+  background-color: #dcf8c6;
+}
+.chat_message_name {
+  position: absolute;
+  top: -18px;
+  font-weight: 800;
+  font-size: xx-small;
+}
+.chat_message_timesamp {
+  margin-left: 10px;
+  font-size: xx-small;
+}
+.chat_footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 62px;
+  border-color: 1px solid lightgray;
+}
+.chat_footer form {
+  flex: 1;
+  display: flex;
+}
+.chat_footer form input {
+  flex: 1;
+  width: 90%;
+  padding: 10px;
+  border: 3px solid rgba(255, 255, 255, 0);
+  border-radius: 30px;
+  outline-width: 0;
+  overflow: hidden;
+}
+.chat_footer form button {
+  display: none;
+}
+.chat_footer .MuiIconButton-root {
+  color: grey;
+  padding: 10px;
+}
